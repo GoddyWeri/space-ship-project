@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.spaceship.Exception.CustomExceptionHandler;
+import com.example.spaceship.kafka.producer.MyKafkaProducer;
 import com.example.spaceship.model.SpaceshipDTO;
 import com.example.spaceship.model.app.PageableInfoObject;
 import com.example.spaceship.service.SpaceshipService;
@@ -34,6 +35,8 @@ public class SpaceShipController {
 	@Autowired
 	private SpaceshipService spaceshipService;
 	
+	 @Autowired
+	    private MyKafkaProducer kafkaProducer;
 
 	/**
 	 * This API returns all the spaceships from database
@@ -126,4 +129,16 @@ public class SpaceShipController {
   		spaceshipService.deleteSpaceshipById(id);
   		return new ResponseEntity<SpaceshipDTO>(new SpaceshipDTO(), HttpStatus.NO_CONTENT);
   	}
+   
+   
+   /**
+    * Kafka API for messaging into console
+    * @param message
+    * @return ResponseEntity<String>
+    */
+   @PostMapping("/message-spaceships")
+   public ResponseEntity<String> sendMessage(@RequestBody Map<String, String> messageMap) {
+       kafkaProducer.sendMessage(Utils.SPACESHIP_TOPIC, messageMap.get("message"));
+       return new ResponseEntity<String>(Utils.OK_SENT, HttpStatus.OK);
+   }
 }

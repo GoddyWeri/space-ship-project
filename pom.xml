@@ -68,14 +68,10 @@
 		</dependency>
 
 		<dependency>
-		    <groupId>org.apache.kafka</groupId>
-		    <artifactId>kafka-clients</artifactId>
-		    </dependency>
-		<dependency>
-		    <groupId>org.flywaydb</groupId>
-		    <artifactId>flyway-core</artifactId>
-		    </dependency>
-
+		    <groupId>org.springframework.kafka</groupId>
+		    <artifactId>spring-kafka</artifactId>
+		</dependency>
+	
 	</dependencies>
 
 	<build>

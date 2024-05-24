@@ -1,27 +1,24 @@
-# Use OpenJDK 11
-FROM openjdk:11 AS build
+# STAGE 1: Build the application
+FROM maven:3.8.4-openjdk-17 AS builder
 
-# Set the working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy the pom.xml and source code
 COPY pom.xml .
-COPY src ./src
+RUN mvn verify --fail-never
 
-# Package the application
-RUN mvn clean package -DskipTests
+COPY . .
+#RUN mvn clean package
 
-# Use the official OpenJDK image for runtime with JDK 11
-FROM openjdk:11-jdk-slim
+# STAGE 2: Setup the API server image
+FROM amazoncorretto:11-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy the jar file from the build stage
-COPY --from=build /app/target/space-ship-project.jar ./space-ship-project.jar
+COPY --from=builder /usr/src/app/target/*.jar app.jar
 
-# Expose the port the app runs on
+# Set the default active Spring profile
+ENV SPRING_PROFILES_ACTIVE=local
+
 EXPOSE 8080
 
-# Set the command to run the jar
-ENTRYPOINT ["java", "-jar", "space-ship-project.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=8080"]
