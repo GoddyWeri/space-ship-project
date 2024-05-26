@@ -1,5 +1,5 @@
 # STAGE 1: Build the application
-FROM maven:3.8.4-openjdk-17 AS builder
+FROM maven:3.8.5-openjdk-17 AS builder
 
 WORKDIR /usr/src/app
 
@@ -10,7 +10,7 @@ COPY . .
 #RUN mvn clean package
 
 # STAGE 2: Setup the API server image
-FROM amazoncorretto:11-alpine
+FROM openjdk:17-jdk-oracle
 
 WORKDIR /app
 
